@@ -15,7 +15,9 @@ export default function SignUpPage() {
   const onSignup = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.post("api/users/signup", user);
+      const res = await axios.post("api/users/signup", user);
+      console.log(res);
+      const data = res.data;
       if (data.status === 200) {
         alert(data.message);
       }
@@ -30,7 +32,7 @@ export default function SignUpPage() {
   return (
     <div className="h-screen flex justify-center items-center">
       <div className="flex flex-col p-8 pl-20 pr-20 rounded-3xl  bg-gray-800">
-        <h1 className="self-center p-5 text-2xl">Login Form</h1>
+        <h1 className="self-center p-5 text-2xl">Signup Form</h1>
         <form className="" action="">
           <div className="flex flex-col gap-4">
             <label htmlFor="email">Email</label>
