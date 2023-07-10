@@ -18,7 +18,7 @@ export default function SignUpPage() {
       const res = await axios.post("api/users/signup", user);
       console.log(res);
       const data = res.data;
-      if (data.status === 200) {
+      if (data.status === 200 || data.status === 402) {
         alert(data.message);
       }
       console.log(data);
@@ -70,7 +70,9 @@ export default function SignUpPage() {
               SignUp
             </button>
             {loading && <p>Loading...</p>}
-            <Link href="/login">Login instead</Link>
+            <Link className=" text-center" href="/login">
+              Login instead
+            </Link>
           </div>
         </form>
       </div>
