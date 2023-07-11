@@ -1,6 +1,19 @@
+"use client"
 import Link from "next/link";
+// require("dotenv").config();
+import { useRouter } from "next/navigation";
+
+
+
 
 const LoginCard = () => {
+
+  const router = useRouter();
+  const onSubmit = (e:any) => {
+    e.preventDefault();
+    router.push("/sharito");
+    // router.push("http://localhost:3000/sharito");
+  }
   return (
     <div className="flex flex-col p-8 pl-20 pr-20 rounded-3xl  bg-gray-800">
       <h1 className="self-center p-5 text-2xl">Login Form</h1>
@@ -22,6 +35,7 @@ const LoginCard = () => {
           />
           <button
             type="submit"
+            onClick={onSubmit}
             className="text-xl bg-slate-900 mt-8 p-4 pl-8 pr-8 self-center rounded-2xl"
           >
             Login
