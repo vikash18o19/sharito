@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import Cookies from "js-cookie";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -10,25 +10,42 @@ export default function SignUpPage() {
     email: "",
     name: "",
     password: "",
+    phone: "",
   });
   const [loading, setLoading] = useState(false);
-  const onSignup = async () => {
+  const onSignup = async (e: any) => {
+    e.preventDefault();
+    const email = user.email;
+    const password = user.password;
+    const name = user.name;
+    const phone = user.phone;
     setLoading(true);
     try {
-      const res = await axios.post("api/users/signup", user);
-      console.log(res);
-      const data = res.data;
-      if (data.status === 200 || data.status === 402) {
-        alert(data.message);
+      const response = await fetch("http://localhost:3002/api/user/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, name, phone }),
+      });
+
+      const data = await response.json();
+
+      // Check if sign-in was successful
+      if (data.status === "SUCCESS") {
+        // Save user details in cookies
+        Cookies.set("user", JSON.stringify(data.data.user));
+        Cookies.set("token", data.data.token);
+
+        // Navigate to /sharito page
+        router.push("/sharito");
+      } else {
+        console.error("Sign-in failed:", data.message);
       }
-      console.log(data);
     } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+      console.error("Error signing in:", error);
     }
   };
-
   return (
     <div className="h-screen flex justify-center items-center">
       <div className="flex flex-col p-8 pl-20 pr-20 rounded-3xl  bg-gray-800">
@@ -60,6 +77,15 @@ export default function SignUpPage() {
               id="password"
               value={user.password}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
+              className="text-black rounded-2xl p-2"
+            />
+            <label htmlFor="phone">Phone</label>
+            <input
+              type="text"
+              name="phone"
+              id="phone"
+              value={user.phone}
+              onChange={(e) => setUser({ ...user, phone: e.target.value })}
               className="text-black rounded-2xl p-2"
             />
             <button

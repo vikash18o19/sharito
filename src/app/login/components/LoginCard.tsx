@@ -1,23 +1,53 @@
-"use client"
+"use client";
 import Link from "next/link";
-// require("dotenv").config();
 import { useRouter } from "next/navigation";
-
-
-
+import Cookies from "js-cookie";
+import { useState } from "react";
 
 const LoginCard = () => {
-
   const router = useRouter();
-  const onSubmit = (e:any) => {
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+  const onSubmit = async (e: any) => {
     e.preventDefault();
-    router.push("/sharito");
-    // router.push("http://localhost:3000/sharito");
-  }
+
+    const email = user.email;
+    const password = user.password;
+    console.log(email, password);
+    // Make the POST request to sign in
+    try {
+      const response = await fetch("http://192.168.1.4:3002/api/user/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      // Check if sign-in was successful
+      if (data.status === "SUCCESS") {
+        // Save user details in cookies
+        Cookies.set("user", JSON.stringify(data.data.user));
+        Cookies.set("token", data.data.token);
+
+        // Navigate to /sharito page
+        router.push("/sharito");
+      } else {
+        console.error("Sign-in failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col p-8 pl-20 pr-20 rounded-3xl  bg-gray-800">
       <h1 className="self-center p-5 text-2xl">Login Form</h1>
-      <form className="" action="">
+      <form className="">
         <div className="flex flex-col gap-4">
           <label htmlFor="email">Email</label>
           <input
@@ -25,6 +55,7 @@ const LoginCard = () => {
             name="email"
             id="email"
             className="text-black rounded-2xl p-2"
+            onChange={(e) => setUser({ ...user, email: e.target.value })}
           />
           <label htmlFor="password">Password</label>
           <input
@@ -32,6 +63,7 @@ const LoginCard = () => {
             name="password"
             id="password"
             className="text-black rounded-2xl p-2"
+            onChange={(e) => setUser({ ...user, password: e.target.value })}
           />
           <button
             type="submit"
