@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useState } from "react";
-
 const LoginCard = () => {
   const router = useRouter();
   const [user, setUser] = useState({
@@ -12,19 +11,20 @@ const LoginCard = () => {
   });
   const onSubmit = async (e: any) => {
     e.preventDefault();
-
     const email = user.email;
     const password = user.password;
-    console.log(email, password);
     // Make the POST request to sign in
     try {
-      const response = await fetch("http://192.168.1.4:3002/api/user/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/user/signin`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
 
