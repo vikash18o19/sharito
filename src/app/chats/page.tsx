@@ -30,33 +30,32 @@ const ChatPage = () => {
   const user = JSON.parse(Cookies.get("user"));
   const token = Cookies.get("token");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch conversations
-        const conversationsResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/messages/getConv`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const conversationsData = await conversationsResponse.json();
-        setConversations(conversationsData.conversations);
-        console.log(conversationsData.conversations);
-        // Fetch messages for the first conversation (if available)
-        if (conversationsData.conversations.length > 0) {
-          const firstConversationId = conversationsData.conversations[0]._id;
-          await fetchMessages(firstConversationId);
+  const fetchData = async () => {
+    try {
+      // Fetch conversations
+      const conversationsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/messages/getConv`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } catch (error) {
-        console.error("Error fetching conversations and messages:", error);
-      }
-    };
+      );
 
+      const conversationsData = await conversationsResponse.json();
+      setConversations(conversationsData.conversations);
+      console.log(conversationsData.conversations);
+      // Fetch messages for the first conversation (if available)
+      // if (conversationsData.conversations.length > 0) {
+      //   const firstConversationId = conversationsData.conversations[0]._id;
+      //   await fetchMessages(firstConversationId);
+      // }
+    } catch (error) {
+      console.error("Error fetching conversations and messages:", error);
+    }
+  };
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -120,6 +119,34 @@ const ChatPage = () => {
       console.error("Error sending message:", error);
     }
   };
+
+  const startConversation = async (name, receiverId) => {
+    try {
+      console.log(receiverId, name);
+      const sendResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/messages/createConv`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            participants: [user._id, receiverId],
+          }),
+        }
+      );
+      const sendData = await sendResponse.json();
+
+      if (sendResponse.status === 201) {
+        console.log(sendData);
+        fetchData();
+      } else {
+        console.log(sendData);
+      }
+    } catch (error) {}
+  };
   return (
     <div>
       <nav className="bg-purple-800 text-white p-4 flex items-center justify-between">
@@ -151,9 +178,14 @@ const ChatPage = () => {
       </nav>
       <div className="flex h-screen bg-slate-600">
         {/* Left Sidebar */}
-        <div className="w-1/4 border-r border-gray-300">
+        <div className="w-1/4 border-r border-gray-300 p-5">
           {/* Search Users */}
-          <SearchUsers onSearch={handleSearch} searchResults={searchResults} />
+          <SearchUsers
+            onSearch={handleSearch}
+            searchResults={searchResults}
+            setSearchResults={setSearchResults}
+            startConversation={startConversation}
+          />
           {/* Conversation List */}
           <ConversationList
             setConvName={setConversationName}
@@ -172,9 +204,9 @@ const ChatPage = () => {
             />
           )}
         </div>
-      </div>
-      <div className="">
-        <Send onSend={onSend} />
+        <div className="fixed w-screen right-0 bottom-0">
+          <Send onSend={onSend} />
+        </div>
       </div>
     </div>
   );

@@ -7,11 +7,11 @@ const ConversationList = ({
 }) => {
   return (
     <div>
-      <h2 className="text-2xl p-4 font-semibold mb-4">Conversations</h2>
+      <h2 className="text-2xl font-semibold mb-4 pt-5">Conversations</h2>
       {conversations.length === 0 ? (
         <p>No conversations found.</p>
       ) : (
-        <ul className="divide-y divide-gray-300 p-4">
+        <ul className="divide-y divide-gray-300">
           {conversations.map((conversation) => (
             <li
               key={conversation._id}
