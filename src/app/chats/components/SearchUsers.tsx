@@ -1,13 +1,11 @@
-// components/SearchUsers.js
 import React, { useState } from "react";
 
-const SearchUsers = () => {
+const SearchUsers = ({ onSearch, searchResults }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Handle user search
   const handleSearch = () => {
-    // Fetch users based on the searchQuery using fetch
-    // Store the fetched data in state to be used in rendering the search results
+    onSearch(searchQuery); // Call the onSearch prop with the search query
   };
 
   return (
@@ -16,7 +14,7 @@ const SearchUsers = () => {
       <div className="flex">
         <input
           type="text"
-          className="border border-gray-400 px-2 py-1 w-full rounded"
+          className="border border-gray-400 px-2 py-1 w-full rounded text-black"
           placeholder="Search users..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -29,6 +27,19 @@ const SearchUsers = () => {
         </button>
       </div>
       {/* Render the search results here */}
+      {searchResults.length === 0 ? (
+        <p>No users found.</p>
+      ) : (
+        <ul className="divide-y divide-gray-300">
+          {searchResults.map((user) => (
+            <li key={user._id} className="py-2">
+              {/* Customize the display of search results based on your data structure */}
+              <div>{user.name}</div>
+              <div>{user.email}</div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
