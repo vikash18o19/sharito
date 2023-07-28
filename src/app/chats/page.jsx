@@ -21,18 +21,22 @@ const ChatPage = () => {
     router.push("/login");
     // Route to the /login page
   };
-  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [selectedConversation, setSelectedConversation] = useState("");
   const [conversationName, setConversationName] = useState("");
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-
+  const [typing, setTyping] = useState(false);
+  const [istyping, setIsTyping] = useState(false);
+  const [socketConnected, setSocketConnected] = useState(false);
   // Fetch the user data from cookies
   const user = JSON.parse(Cookies.get("user"));
   const token = Cookies.get("token");
 
 
   useEffect(() => {
+    fetchData();
+
     // Establish a Socket.IO connection
     socket = io(process.env.NEXT_PUBLIC_BACKEND_URI);
 
@@ -42,21 +46,24 @@ const ChatPage = () => {
     // Listen for a "connected" event to confirm the connection is successful
     socket.on("connected", () => {
       console.log("Socket.IO connected to the server.");
+      setSocketConnected(true);
     });
+    socket.on("typing", () => {setIsTyping(true);console.log("another user typing in room: ",selectedConversation);});
+    socket.on("stop typing", () => {setIsTyping(false); console.log("another user stopped typing in room: ",selectedConversation);});
+    
     socket.on("messageRecieved", (newMessage) => {
-      console.log(newMessage);
-      fetchMessages(selectedConversation);
+      fetchMessages(newMessage.conversation);
+      console.log("recieved message in room: ", newMessage.conversation);
+
     });
     // Clean up the socket connection when the component unmounts
     return () => {
       socket.off();
     };
-  });
-
-
-  useEffect(() => {
-    fetchData();
   },[]);
+
+//TODO: fix issue with conversations not updating
+
 
   const fetchData = async () => {
     try {
@@ -83,6 +90,7 @@ const ChatPage = () => {
 
 
   const fetchMessages = async (conversationId) => {
+    setSelectedConversation(conversationId);
     try {
       const messagesResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/messages/${conversationId}/getMessages`,
@@ -97,8 +105,8 @@ const ChatPage = () => {
       const messagesData = await messagesResponse.json();
       // console.log(messagesData);
       setMessages(messagesData.messages);
-      setSelectedConversation(conversationId);
-
+      console.log("joining room: ", selectedConversation);
+      socket.emit("join chat", selectedConversation);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -124,6 +132,7 @@ const ChatPage = () => {
     }
   };
   const onSend = async (message) => {
+    console.log("sending to: ", selectedConversation);
     try {
 
       const sendResponse = await fetch(
@@ -141,6 +150,7 @@ const ChatPage = () => {
       const sendData = await sendResponse.json();
       const data = sendData.data;
       socket.emit("new message", data);
+      console.log("sending message to room: ", selectedConversation);
       fetchMessages(selectedConversation);
     } catch (error) {
       console.error("Error sending message:", error);
@@ -173,14 +183,25 @@ const ChatPage = () => {
         console.log(sendData);
       }
     } catch (error) {}
+  };
+  const typingHandler = (e) => {
+  
+    if (!socketConnected) return;
 
-
-    
-
-
-
-
-
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedConversation);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", selectedConversation);
+        setTyping(false);
+      }
+    }, timerLength);
   };
   return (
     <div>
@@ -225,7 +246,7 @@ const ChatPage = () => {
           <ConversationList
             setConvName={setConversationName}
             conversations={conversations}
-            onConversationClick={fetchMessages}
+            fetchMessages={fetchMessages}
           />
         </div>
         {/* Right Sidebar */}
@@ -243,7 +264,7 @@ const ChatPage = () => {
               </div>
               {selectedConversation ? (
                 <div className="sticky  bottom-0">
-                  <Send onSend={onSend} />
+                  <Send onSend={onSend} typing = {typing} istyping={istyping} handler={typingHandler}/>
                 </div>
               ) : null}
           </div>

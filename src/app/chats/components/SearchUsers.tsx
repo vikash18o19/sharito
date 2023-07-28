@@ -50,17 +50,17 @@ const SearchUsers = ({
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <Button
+          <button
             className="bg-green-500 p-2 rounded-xl"
             onClick={() => {
               handleClick();
             }}
           >
             Start
-          </Button>
-          <Button className="bg-red-500 p-2 rounded-xl" onClick={handleCancel}>
+          </button>
+          <button className="bg-red-500 p-2 rounded-xl" onClick={handleCancel}>
             Cancel
-          </Button>
+          </button>
         </div>
       ) : null}
       {selection != true ? (
@@ -98,7 +98,7 @@ const SearchUsers = ({
                   <div>{user.name}</div>
                   <div>{user.email}</div>
                 </div>
-                <Button
+                <button
                   className="bg-purple-400 rounded-2xl p-2"
                   onClick={() => {
                     setSelection(true);
@@ -106,7 +106,7 @@ const SearchUsers = ({
                   }}
                 >
                   Select
-                </Button>
+                </button>
               </div>
             </li>
           ))}

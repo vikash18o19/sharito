@@ -1,10 +1,13 @@
+"use client";
 import React from "react";
 
-const ConversationList = ({
-  setConvName,
-  conversations,
-  onConversationClick,
-}) => {
+const ConversationList = ({ setConvName, conversations, fetchMessages }) => {
+  const handleClick = (conversation) => {
+    console.log("click");
+    console.log("console logging conversation", conversation);
+    setConvName(conversation.name);
+    fetchMessages(conversation._id);
+  };
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4 pt-5">Conversations</h2>
@@ -17,8 +20,7 @@ const ConversationList = ({
               key={conversation._id}
               className="py-2 cursor-pointer bg-gray-100 hover:bg-gray-200 p-2 text-black"
               onClick={() => {
-                onConversationClick(conversation._id);
-                setConvName(conversation.name);
+                handleClick(conversation);
               }}
             >
               {/* Customize the display of the conversation based on your data structure */}
