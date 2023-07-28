@@ -1,6 +1,5 @@
 "use client";
 
-import Head from "next/head";
 import ConversationList from "./components/ConversationList";
 import MessageList from "./components/MessageList";
 import SearchUsers from "./components/SearchUsers";
@@ -8,8 +7,10 @@ import SearchUsers from "./components/SearchUsers";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { set } from "mongoose";
 import Send from "./components/Send";
+import io from "socket.io-client";
+
+var socket;
 
 const ChatPage = () => {
   const router = useRouter();
@@ -30,6 +31,33 @@ const ChatPage = () => {
   const user = JSON.parse(Cookies.get("user"));
   const token = Cookies.get("token");
 
+
+  useEffect(() => {
+    // Establish a Socket.IO connection
+    socket = io(process.env.NEXT_PUBLIC_BACKEND_URI);
+
+    // Emit a "setup" event to the server to identify the current user
+    socket.emit("setup", user);
+
+    // Listen for a "connected" event to confirm the connection is successful
+    socket.on("connected", () => {
+      console.log("Socket.IO connected to the server.");
+    });
+    socket.on("messageRecieved", (newMessage) => {
+      console.log(newMessage);
+      fetchMessages(selectedConversation);
+    });
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      socket.off();
+    };
+  });
+
+
+  useEffect(() => {
+    fetchData();
+  },[]);
+
   const fetchData = async () => {
     try {
       // Fetch conversations
@@ -45,19 +73,14 @@ const ChatPage = () => {
 
       const conversationsData = await conversationsResponse.json();
       setConversations(conversationsData.conversations);
-      console.log(conversationsData.conversations);
-      // Fetch messages for the first conversation (if available)
-      // if (conversationsData.conversations.length > 0) {
-      //   const firstConversationId = conversationsData.conversations[0]._id;
-      //   await fetchMessages(firstConversationId);
-      // }
+
     } catch (error) {
       console.error("Error fetching conversations and messages:", error);
     }
   };
-  useEffect(() => {
-    fetchData();
-  }, []);
+
+  
+
 
   const fetchMessages = async (conversationId) => {
     try {
@@ -72,9 +95,10 @@ const ChatPage = () => {
       );
 
       const messagesData = await messagesResponse.json();
-      console.log(messagesData);
+      // console.log(messagesData);
       setMessages(messagesData.messages);
       setSelectedConversation(conversationId);
+
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -99,8 +123,9 @@ const ChatPage = () => {
       console.error("Error searching users:", error);
     }
   };
-  const onSend = async (message: string) => {
+  const onSend = async (message) => {
     try {
+
       const sendResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/messages/${selectedConversation}/sendMessage`,
         {
@@ -114,6 +139,8 @@ const ChatPage = () => {
       );
 
       const sendData = await sendResponse.json();
+      const data = sendData.data;
+      socket.emit("new message", data);
       fetchMessages(selectedConversation);
     } catch (error) {
       console.error("Error sending message:", error);
@@ -146,6 +173,14 @@ const ChatPage = () => {
         console.log(sendData);
       }
     } catch (error) {}
+
+
+    
+
+
+
+
+
   };
   return (
     <div>
@@ -194,19 +229,27 @@ const ChatPage = () => {
           />
         </div>
         {/* Right Sidebar */}
-        <div className="w-3/4 p-4">
+        <div className="w-3/4 p-4 overflow-y-scroll">
           {/* Message List */}
-          {selectedConversation && (
-            <MessageList
-              conversation={conversationName}
-              user={user}
-              messages={messages}
-            />
-          )}
+          <div>
+              <div className="">
+                {selectedConversation && (
+                  <MessageList
+                    conversation={conversationName}
+                    user={user}
+                    messages={messages}
+                  />
+                )}
+              </div>
+              {selectedConversation ? (
+                <div className="sticky  bottom-0">
+                  <Send onSend={onSend} />
+                </div>
+              ) : null}
+          </div>
+          
         </div>
-        <div className="fixed w-screen right-0 bottom-0">
-          <Send onSend={onSend} />
-        </div>
+        
       </div>
     </div>
   );
