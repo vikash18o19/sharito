@@ -1,12 +1,18 @@
 "use client";
 import React from "react";
 
-const ConversationList = ({ setConvName, conversations, fetchMessages }) => {
+const ConversationList = ({
+  setConvName,
+  conversations,
+  fetchMessages,
+  setSelectedConversation,
+}) => {
   const handleClick = (conversation) => {
     console.log("click");
     console.log("console logging conversation", conversation);
     setConvName(conversation.name);
-    fetchMessages(conversation._id);
+    setSelectedConversation(conversation._id);
+    console.log(conversation._id);
   };
   return (
     <div>

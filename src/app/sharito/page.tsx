@@ -11,12 +11,12 @@ const HomePage = () => {
   const router = useRouter();
   // Function to fetch posts from the server
   const fetchPosts = async () => {
+    console.log("fetching posts");
     try {
       // Get the token from cookies
       const token = Cookies.get("token");
-
       const response = await fetch(
-        "http://192.168.1.4:3002/api/posts/fetchPosts",
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchPosts`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -21,7 +21,7 @@ const ChatPage = () => {
     router.push("/login");
     // Route to the /login page
   };
-  const [selectedConversation, setSelectedConversation] = useState("");
+  const [selectedConversation, setSelectedConversation] = useState(null);
   const [conversationName, setConversationName] = useState("");
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -62,8 +62,13 @@ const ChatPage = () => {
     };
   },[]);
 
-//TODO: fix issue with conversations not updating
-
+//ISSUE: fix issue with conversations not updating
+//NOTE: this works now , thanks to the useEffect below, source:https://bosctechlabs.com/solve-changes-not-reflecting-when-usestate-set-method/#:~:text=It%20is%20the%20failure%20of,updates%20are%20not%20reflected%20immediately.
+  useEffect(() => {
+    if (selectedConversation) {
+      fetchMessages(selectedConversation);
+    }
+  },[selectedConversation])
 
   const fetchData = async () => {
     try {
@@ -90,7 +95,6 @@ const ChatPage = () => {
 
 
   const fetchMessages = async (conversationId) => {
-    setSelectedConversation(conversationId);
     try {
       const messagesResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/messages/${conversationId}/getMessages`,
@@ -105,7 +109,7 @@ const ChatPage = () => {
       const messagesData = await messagesResponse.json();
       // console.log(messagesData);
       setMessages(messagesData.messages);
-      console.log("joining room: ", selectedConversation);
+      console.log("joining conversationID: ", selectedConversation);
       socket.emit("join chat", selectedConversation);
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -185,7 +189,7 @@ const ChatPage = () => {
     } catch (error) {}
   };
   const typingHandler = (e) => {
-  
+    console.log("typing in room");
     if (!socketConnected) return;
 
     if (!typing) {
@@ -247,6 +251,7 @@ const ChatPage = () => {
             setConvName={setConversationName}
             conversations={conversations}
             fetchMessages={fetchMessages}
+            setSelectedConversation={setSelectedConversation}
           />
         </div>
         {/* Right Sidebar */}
