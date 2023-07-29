@@ -64,6 +64,7 @@ const ChatPage = () => {
 
 //ISSUE: fix issue with conversations not updating
 //NOTE: this works now , thanks to the useEffect below, source:https://bosctechlabs.com/solve-changes-not-reflecting-when-usestate-set-method/#:~:text=It%20is%20the%20failure%20of,updates%20are%20not%20reflected%20immediately.
+//NOTE: another solution is to pass callback to setState().  
   useEffect(() => {
     if (selectedConversation) {
       fetchMessages(selectedConversation);
