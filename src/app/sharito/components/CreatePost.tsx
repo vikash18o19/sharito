@@ -14,14 +14,17 @@ const CreatePostModal = ({ onClose, fetchPosts }) => {
       const userID = user._id;
       const creatorName = user.name;
       console.log(description, userID, creatorName);
-      const response = await fetch("http://192.168.1.4:3002/api/posts/upload", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ description, userID, creatorName }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ description, userID, creatorName }),
+        }
+      );
     } catch (error) {
       console.error("Error posting :", error);
     }

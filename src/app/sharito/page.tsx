@@ -11,7 +11,7 @@ const HomePage = () => {
   const router = useRouter();
   // Function to fetch posts from the server
   const fetchPosts = async () => {
-    console.log("fetching posts");
+    console.log("fetching posts", process.env.NEXT_PUBLIC_BACKEND_URI);
     try {
       // Get the token from cookies
       const token = Cookies.get("token");
