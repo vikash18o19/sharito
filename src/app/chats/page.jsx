@@ -112,6 +112,7 @@ const ChatPage = () => {
       setMessages(messagesData.messages);
       console.log("joining conversationID: ", selectedConversation);
       socket.emit("join chat", selectedConversation);
+
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -209,7 +210,7 @@ const ChatPage = () => {
     }, timerLength);
   };
   return (
-    <div>
+    <div style={{height:"svh"}}>
       <nav className="bg-purple-800 text-white p-4 flex items-center justify-between">
         <h1 className="text-lg font-semibold">Sharito</h1>
         <div className="space-x-2">
@@ -237,7 +238,7 @@ const ChatPage = () => {
           </button>
         </div>
       </nav>
-      <div className="flex h-screen bg-slate-600">
+      <div className="flex bg-slate-600">
         {/* Left Sidebar */}
         <div className="w-1/4 border-r border-gray-300 p-5">
           {/* Search Users */}
@@ -256,9 +257,9 @@ const ChatPage = () => {
           />
         </div>
         {/* Right Sidebar */}
-        <div className="w-3/4 p-4 overflow-y-scroll">
+        <div id="message" className="w-3/4 p-4 overflow-y-scroll">
           {/* Message List */}
-          <div>
+          <div className="w-full">
               <div className="">
                 {selectedConversation && (
                   <MessageList
@@ -269,7 +270,7 @@ const ChatPage = () => {
                 )}
               </div>
               {selectedConversation ? (
-                <div className="sticky  bottom-0">
+                <div className="fixed w-max  bottom-0">
                   <Send onSend={onSend} typing = {typing} istyping={istyping} handler={typingHandler}/>
                 </div>
               ) : null}

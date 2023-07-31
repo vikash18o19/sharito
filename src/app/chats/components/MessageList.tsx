@@ -7,7 +7,7 @@ const MessageList = ({ conversation, user, messages }) => {
       {messages.length === 0 ? (
         <p>No messages found.</p>
       ) : (
-        <ul className="divide-y divide-gray-300">
+        <ul className="divide-y divide-gray-300 pb-8">
           {messages.map((message) => (
             <li
               key={message._id}
