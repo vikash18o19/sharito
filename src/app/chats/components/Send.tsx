@@ -17,13 +17,13 @@ const Send = ({ onSend, typing, istyping, handler }) => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex w-2/3">
       {istyping == true ? (
         <div className="bg-black text-white">Typing...</div>
       ) : null}
       <input
         type="text"
-        className="border border-gray-400 px-2 py-1 w-full rounded text-black"
+        className="border flex-grow border-gray-400 px-2 py-1 rounded text-black"
         placeholder="Type a message..."
         value={message}
         onChange={subHandler}

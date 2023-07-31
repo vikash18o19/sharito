@@ -5,7 +5,7 @@ import MessageList from "./components/MessageList";
 import SearchUsers from "./components/SearchUsers";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import Cookies from "js-cookie";
 import Send from "./components/Send";
 import io from "socket.io-client";
@@ -29,6 +29,9 @@ const ChatPage = () => {
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
+
+  const scrollContainerRef = useRef(null);
+
   // Fetch the user data from cookies
   const user = JSON.parse(Cookies.get("user"));
   const token = Cookies.get("token");
@@ -209,8 +212,22 @@ const ChatPage = () => {
       }
     }, timerLength);
   };
+
+
+  const scrollToBottom = () => {
+    if (scrollContainerRef.current) {
+      const scrollContainer = scrollContainerRef.current;
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    // Scroll to the bottom when the component mounts and whenever new content is added
+    scrollToBottom();
+  }, [messages]);
+  
   return (
-    <div style={{height:"svh"}}>
+    <div>
       <nav className="bg-purple-800 text-white p-4 flex items-center justify-between">
         <h1 className="text-lg font-semibold">Sharito</h1>
         <div className="space-x-2">
@@ -238,7 +255,7 @@ const ChatPage = () => {
           </button>
         </div>
       </nav>
-      <div className="flex bg-slate-600">
+      <div className="flex bg-slate-600 h-screen">
         {/* Left Sidebar */}
         <div className="w-1/4 border-r border-gray-300 p-5">
           {/* Search Users */}
@@ -257,9 +274,9 @@ const ChatPage = () => {
           />
         </div>
         {/* Right Sidebar */}
-        <div id="message" className="w-3/4 p-4 overflow-y-scroll">
+        <div className="w-3/4 p-4 overflow-y-scroll" ref={scrollContainerRef}>
           {/* Message List */}
-          <div className="w-full">
+          <div className="">
               <div className="">
                 {selectedConversation && (
                   <MessageList
@@ -270,7 +287,7 @@ const ChatPage = () => {
                 )}
               </div>
               {selectedConversation ? (
-                <div className="fixed w-max  bottom-0">
+                <div className="fixed w-full bottom-2">
                   <Send onSend={onSend} typing = {typing} istyping={istyping} handler={typingHandler}/>
                 </div>
               ) : null}
