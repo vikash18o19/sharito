@@ -1,14 +1,13 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
+import io from "socket.io-client";
+import Cookies from "js-cookie";
 import ConversationList from "./components/ConversationList";
 import MessageList from "./components/MessageList";
 import SearchUsers from "./components/SearchUsers";
-
-import { useRouter } from "next/navigation";
-import { useEffect, useState,useRef } from "react";
-import Cookies from "js-cookie";
 import Send from "./components/Send";
-import io from "socket.io-client";
+import { useRouter } from "next/navigation";
 
 var socket;
 
@@ -29,6 +28,7 @@ const ChatPage = () => {
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [isLeftPartVisible, setIsLeftPartVisible] = useState(true); // State to manage visibility of the left part
 
   const scrollContainerRef = useRef(null);
 
@@ -36,6 +36,9 @@ const ChatPage = () => {
   const user = JSON.parse(Cookies.get("user"));
   const token = Cookies.get("token");
 
+  const toggleLeftPartVisibility = () => {
+    setIsLeftPartVisible((prevState) => !prevState);
+  };
 
   useEffect(() => {
     fetchData();
@@ -229,7 +232,28 @@ const ChatPage = () => {
   return (
     <div>
       <nav className="bg-purple-800 text-white p-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Sharito</h1>
+        <div className="flex items-center">
+          <button
+            className="block mr-4 text-white"
+            onClick={toggleLeftPartVisibility}
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              />
+            </svg>
+          </button>
+          <h1 className="text-lg font-semibold">Sharito</h1>
+        </div>
         <div className="space-x-2">
           <button
             className="text-white bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded"
@@ -239,14 +263,12 @@ const ChatPage = () => {
           >
             Home
           </button>
-
           <button className="text-white bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded">
             About
           </button>
           <button className="text-white bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded">
             Help
           </button>
-          {/* Logout Button */}
           <button
             className="text-white bg-red-600 hover:bg-red-500 px-3 py-2 rounded"
             onClick={handleLogout}
@@ -257,44 +279,42 @@ const ChatPage = () => {
       </nav>
       <div className="flex bg-slate-600 h-screen">
         {/* Left Sidebar */}
-        <div className="w-1/4 border-r border-gray-300 p-5">
-          {/* Search Users */}
+        <div
+          className={`left-0 w-1/4 border-r border-gray-300 p-5 ${
+            isLeftPartVisible ? "block max-md:w-full" : "hidden md:block"
+          }`}
+        >
           <SearchUsers
             onSearch={handleSearch}
             searchResults={searchResults}
             setSearchResults={setSearchResults}
             startConversation={startConversation}
           />
-          {/* Conversation List */}
           <ConversationList
             setConvName={setConversationName}
             conversations={conversations}
             fetchMessages={fetchMessages}
             setSelectedConversation={setSelectedConversation}
+            setIsLeftPartVisible={setIsLeftPartVisible}
           />
         </div>
         {/* Right Sidebar */}
-        <div className="w-3/4 p-4 overflow-y-scroll" ref={scrollContainerRef}>
-          {/* Message List */}
-          <div className="">
-              <div className="">
-                {selectedConversation && (
-                  <MessageList
-                    conversation={conversationName}
-                    user={user}
-                    messages={messages}
-                  />
-                )}
-              </div>
-              {selectedConversation ? (
-                <div className="fixed w-full bottom-2">
-                  <Send onSend={onSend} typing = {typing} istyping={istyping} handler={typingHandler}/>
-                </div>
-              ) : null}
-          </div>
-          
+        <div className={`w-3/4 p-4 overflow-y-scroll ${
+            isLeftPartVisible ? "max-md:hidden" : "w-full"
+          }`} ref={scrollContainerRef}>
+          {selectedConversation && (
+            <MessageList
+              conversation={conversationName}
+              user={user}
+              messages={messages}
+            />
+          )}
+          {selectedConversation && (
+            <div className="fixed w-full bottom-2 max-md:w-auto ">
+              <Send onSend={onSend} typing={typing} istyping={istyping} handler={typingHandler} />
+            </div>
+          )}
         </div>
-        
       </div>
     </div>
   );

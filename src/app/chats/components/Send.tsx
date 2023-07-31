@@ -23,8 +23,8 @@ const Send = ({ onSend, typing, istyping, handler }) => {
       ) : null}
       <input
         type="text"
-        className="border flex-grow border-gray-400 px-2 py-1 rounded text-black"
-        placeholder="Type a message..."
+        className="border flex-grow border-gray-400 px-4 py-1 rounded-full text-black"
+        placeholder="Message"
         value={message}
         onChange={subHandler}
       />

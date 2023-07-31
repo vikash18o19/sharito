@@ -13,12 +13,14 @@ const ConversationList = ({
   conversations,
   fetchMessages,
   setSelectedConversation,
+  setIsLeftPartVisible,
 }) => {
   const handleClick = (conversation) => {
     console.log("click");
     console.log("console logging conversation", conversation);
     setConvName(conversation.name);
     setSelectedConversation(conversation._id);
+    setIsLeftPartVisible(false);
     console.log(conversation._id);
   };
   return (
