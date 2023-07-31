@@ -1,6 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import * as React from "react";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Divider from "@mui/material/Divider";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 
 const SearchUsers = ({
   onSearch,
@@ -45,29 +55,26 @@ const SearchUsers = ({
         <div>
           <input
             type="text"
-            className="border border-gray-400 px-2 py-1 w-full rounded text-black"
+            className="border border-gray-400 px-2 py-1 w-full rounded-full text-black"
             placeholder="Conversation Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <button
-            className="bg-green-500 p-2 rounded-xl"
-            onClick={() => {
-              handleClick();
-            }}
-          >
-            Start
-          </button>
-          <button className="bg-red-500 p-2 rounded-xl" onClick={handleCancel}>
-            Cancel
-          </button>
+          <Stack spacing={2} direction="row" padding={2}>
+            <Button onClick={handleClick} variant="contained" color="success">
+              Start
+            </Button>
+            <Button onClick={handleCancel} variant="contained" color="error">
+              Cancel
+            </Button>
+          </Stack>
         </div>
       ) : null}
       {selection != true ? (
         <div className="flex">
           <input
             type="text"
-            className="border border-gray-400 px-2 py-1 w-full rounded text-black"
+            className="border border-gray-400 px-4 py-1 w-full rounded-full text-black"
             placeholder="Search users..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -88,27 +95,74 @@ const SearchUsers = ({
       ) : (
         <ul className="divide-y divide-gray-300">
           {searchResults.map((user) => (
-            <li
+            <ListItem
+              sx={{
+                bgcolor: "powderblue",
+                marginTop: "0.5rem",
+                marginBottom: "0.5rem",
+                borderRadius: "1rem",
+                ":hover": {
+                  bgcolor: "darkgray",
+                },
+              }}
               key={user._id}
-              className="py-2 bg-black text-white p-2 my-2"
-              onClick={() => {}}
+              alignItems="flex-start"
+              onClick={() => {
+                setSelection(true);
+                setSelectedUser(user);
+              }}
             >
-              <div className="flex gap-4">
-                <div className="flex-col">
-                  <div>{user.name}</div>
-                  <div>{user.email}</div>
-                </div>
-                <button
-                  className="bg-purple-400 rounded-2xl p-2"
-                  onClick={() => {
-                    setSelection(true);
-                    setSelectedUser(user);
-                  }}
-                >
-                  Select
-                </button>
-              </div>
-            </li>
+              <ListItemAvatar>
+                <Avatar alt={user.name} src="" />
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <React.Fragment>
+                    <Typography
+                      sx={{ display: "inline" }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {user.name}
+                    </Typography>
+                  </React.Fragment>
+                }
+                secondary={
+                  <React.Fragment>
+                    <Typography
+                      sx={{ display: "inline" }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {user.email}
+                    </Typography>
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
+            // <li
+            //   key={user._id}
+            //   className="py-2 bg-black text-white p-2 my-2"
+            //   onClick={() => {}}
+            // >
+            //   <div className="flex gap-4">
+            //     <div className="flex-col">
+            //       <div>{user.name}</div>
+            //       <div>{user.email}</div>
+            //     </div>
+            //     <button
+            //       className="bg-purple-400 rounded-2xl p-2"
+            //       onClick={() => {
+            //         setSelection(true);
+            //         setSelectedUser(user);
+            //       }}
+            //     >
+            //       Select
+            //     </button>
+            //   </div>
+            // </li>
           ))}
         </ul>
       )}

@@ -66,8 +66,11 @@ const ConversationList = ({
                       component="span"
                       variant="body2"
                       color="text.primary"
+                      fontFamily={"sans-serif"}
+                      // fontWeight={"bold"}
+                      fontSize={"1.05rem"}
                     >
-                      {conversation.name}
+                      {conversation.name.toUpperCase()}
                     </Typography>
                   </React.Fragment>
                 }
