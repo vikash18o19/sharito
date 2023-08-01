@@ -26,6 +26,7 @@
     "framer-motion": "^10.13.1",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.0",
+    "lottie-web": "^5.12.2",
     "mongoose": "^7.3.1",
     "next": "13.4.7",
     "nodemailer": "^6.9.3",

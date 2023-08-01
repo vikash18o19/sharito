@@ -1,6 +1,6 @@
 import React from "react";
-
-const MessageList = ({ conversation, user, messages }) => {
+import TypingAni from './TypingAnimation';
+const MessageList = ({ conversation, user, messages, typing, istyping }) => {
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">{conversation}</h2>
@@ -11,10 +11,10 @@ const MessageList = ({ conversation, user, messages }) => {
           {messages.map((message) => (
             <li
               key={message._id}
-              className={`py-2 px-2 my-2 rounded-3xl ${
+              className={`py-2 px-2 my-2 rounded-2xl ${
                 message.sender._id === user._id
-                  ? "bg-blue-200 text-right pr-5"
-                  : "bg-purple-200 pl-5"
+                  ? "bg-blue-200 text-right pr-5 rounded-tr-sm"
+                  : "bg-purple-200 pl-5 rounded-tl-sm"
               }`}
             >
               <div className="text-sm text-black mb-2">{message.content}</div>
@@ -30,9 +30,14 @@ const MessageList = ({ conversation, user, messages }) => {
                 })}
               </div>
             </li>
-          ))}
+          ))}          
+{istyping == true ?
+                  <TypingAni width={"4rem"} height={"4rem"} />: null
+                } 
         </ul>
+        
       )}
+       
     </div>
   );
 };

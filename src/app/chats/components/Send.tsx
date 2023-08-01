@@ -10,17 +10,19 @@ const Send = ({ onSend, typing, istyping, handler }) => {
     setMessage("");
   };
   const subHandler = (e) => {
-    console.log(typing);
-    console.log(istyping);
+    // console.log(typing);
+    // console.log(istyping);
     handler(e);
     setMessage(e.target.value);
   };
 
   return (
     <div className="flex w-2/3">
-      {istyping == true ? (
-        <div className="bg-black text-white">Typing...</div>
-      ) : null}
+      {/* {istyping == true ? (
+            <div>
+              Typing..
+           </div>
+      ) : null} */}
       <input
         type="text"
         className="border flex-grow border-gray-400 px-4 py-1 rounded-full text-black"
