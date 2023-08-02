@@ -33,7 +33,7 @@ const ChatPage = () => {
   const scrollContainerRef = useRef(null);
 
   // Fetch the user data from cookies
-  const userData = JSON.parse(Cookies.get("user"));
+  const userData = Cookies.get("user");
   const user = JSON.parse(userData);
   const token = Cookies.get("token");
 
