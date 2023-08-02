@@ -5,7 +5,7 @@ const CreatePostModal = ({ onClose, fetchPosts }) => {
   const [image, setImage] = useState(null);
 
   // Function to handle post creation
-  const handlePostCreate = async (e: any) => {
+  const handlePostCreate = async (e) => {
     e.preventDefault();
     try {
       // Get the token from cookies
