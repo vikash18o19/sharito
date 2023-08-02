@@ -205,19 +205,19 @@ const ChatPage = () => {
     // Clear any existing timer
     clearTimeout(typingTimeout);
 
-    // if (!typing) {
+    if (!typing) {
     setTyping(true);
     console.log("typing:", typing);
     socket.emit("typing", selectedConversation);
-    // }
+    }
 
     // Set a new timer
     typingTimeout = setTimeout(() => {
-      // if (typing) {
+      if (typing) {
       console.log("typing: ", typing);
       socket.emit("stop typing", selectedConversation);
       setTyping(false);
-      // }
+      }
     }, 1000);
   };
 
