@@ -33,13 +33,17 @@ const ChatPage = () => {
   const scrollContainerRef = useRef(null);
 
   // Fetch the user data from cookies
-  const user = JSON.parse(Cookies.get("user"));
-  const token = Cookies.get("token");
+  let user;
+  let token;
 
   const toggleLeftPartVisibility = () => {
     setIsLeftPartVisible((prevState) => !prevState);
   };
-
+  useEffect(async() => {
+    const userData = await Cookies.get("user")
+    user = await JSON.parse(userData);
+    token = await Cookies.get("token");
+  },[]);
   useEffect(() => {
     fetchData();
 
