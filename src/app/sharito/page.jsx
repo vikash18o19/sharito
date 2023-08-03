@@ -98,9 +98,11 @@ const HomePage = () => {
             >
               {post.image ? (
                 <img
-                  src={post.image.data}
+                  src={`data:${post.image.contentType};base64,${Buffer.from(
+                    post.image.data
+                  ).toString("base64")}`}
                   alt={post.description}
-                  className="w-full h-44 object-cover rounded-lg mb-4"
+                  className="w-full object-cover rounded-lg mb-4"
                 />
               ) : null}
               <p className="text-black font-semibold mb-2">
@@ -115,7 +117,7 @@ const HomePage = () => {
 
           {/* + Button for Create Post */}
           <button
-            className="fixed bottom-10 right-10 bg-purple-800 text-white p-4 rounded-full shadow-lg hover:bg-purple-700"
+            className="h-20 w-20 fixed bottom-10 right-10 bg-purple-800 text-white p-4 rounded-full shadow-lg hover:bg-purple-700 text-center text-3xl"
             onClick={() => setShowModal(true)}
           >
             +
