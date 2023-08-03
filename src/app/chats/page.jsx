@@ -33,17 +33,13 @@ const ChatPage = () => {
   const scrollContainerRef = useRef(null);
 
   // Fetch the user data from cookies
-  let user;
-  let token;
+  const user = JSON.parse(Cookies.get("user"));
+  const token = Cookies.get("token");
 
   const toggleLeftPartVisibility = () => {
     setIsLeftPartVisible((prevState) => !prevState);
   };
-  useEffect(async() => {
-    const userData = await Cookies.get("user")
-    user = await JSON.parse(userData);
-    token = await Cookies.get("token");
-  },[]);
+
   useEffect(() => {
     fetchData();
 
@@ -58,13 +54,21 @@ const ChatPage = () => {
       console.log("Socket.IO connected to the server.");
       setSocketConnected(true);
     });
-    socket.on("typing", () => { setIsTyping(true); console.log("another user typing in room: ", selectedConversation); });
-    socket.on("stop typing", () => { setIsTyping(false); console.log("another user stopped typing in room: ", selectedConversation); });
+    socket.on("typing", () => {
+      setIsTyping(true);
+      console.log("another user typing in room: ", selectedConversation);
+    });
+    socket.on("stop typing", () => {
+      setIsTyping(false);
+      console.log(
+        "another user stopped typing in room: ",
+        selectedConversation
+      );
+    });
 
     socket.on("messageRecieved", (newMessage) => {
       fetchMessages(newMessage.conversation);
       console.log("recieved message in room: ", newMessage.conversation);
-
     });
     // Clean up the socket connection when the component unmounts
     return () => {
@@ -74,12 +78,12 @@ const ChatPage = () => {
 
   //ISSUE: fix issue with conversations not updating
   //NOTE: this works now , thanks to the useEffect below, source:https://bosctechlabs.com/solve-changes-not-reflecting-when-usestate-set-method/#:~:text=It%20is%20the%20failure%20of,updates%20are%20not%20reflected%20immediately.
-  //NOTE: another solution is to pass callback to setState().  
+  //NOTE: another solution is to pass callback to setState().
   useEffect(() => {
     if (selectedConversation) {
       fetchMessages(selectedConversation);
     }
-  }, [selectedConversation])
+  }, [selectedConversation]);
 
   const fetchData = async () => {
     try {
@@ -96,14 +100,10 @@ const ChatPage = () => {
 
       const conversationsData = await conversationsResponse.json();
       setConversations(conversationsData.conversations);
-
     } catch (error) {
       console.error("Error fetching conversations and messages:", error);
     }
   };
-
-
-
 
   const fetchMessages = async (conversationId) => {
     try {
@@ -122,7 +122,6 @@ const ChatPage = () => {
       setMessages(messagesData.messages);
       console.log("joining conversationID: ", selectedConversation);
       socket.emit("join chat", selectedConversation);
-
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -150,7 +149,6 @@ const ChatPage = () => {
   const onSend = async (message) => {
     console.log("sending to: ", selectedConversation);
     try {
-
       const sendResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/messages/${selectedConversation}/sendMessage`,
         {
@@ -198,34 +196,31 @@ const ChatPage = () => {
       } else {
         console.log(sendData);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
   let typingTimeout;
 
   const typingHandler = (e) => {
-
     if (!socketConnected) return;
 
     // Clear any existing timer
     clearTimeout(typingTimeout);
 
     if (!typing) {
-    setTyping(true);
-    console.log("typing:", typing);
-    socket.emit("typing", selectedConversation);
+      setTyping(true);
+      console.log("typing:", typing);
+      socket.emit("typing", selectedConversation);
     }
 
     // Set a new timer
     typingTimeout = setTimeout(() => {
       if (typing) {
-      console.log("typing: ", typing);
-      socket.emit("stop typing", selectedConversation);
-      setTyping(false);
+        console.log("typing: ", typing);
+        socket.emit("stop typing", selectedConversation);
+        setTyping(false);
       }
     }, 1000);
   };
-
-
 
   const scrollToBottom = () => {
     if (scrollContainerRef.current) {
@@ -290,8 +285,9 @@ const ChatPage = () => {
       <div className="flex bg-slate-600 h-screen">
         {/* Left Sidebar */}
         <div
-          className={`left-0 w-1/4 border-r border-gray-300 p-5 ${isLeftPartVisible ? "block max-md:w-full" : "hidden md:block"
-            }`}
+          className={`left-0 w-1/4 border-r border-gray-300 p-5 ${
+            isLeftPartVisible ? "block max-md:w-full" : "hidden md:block"
+          }`}
         >
           <SearchUsers
             onSearch={handleSearch}
@@ -308,8 +304,12 @@ const ChatPage = () => {
           />
         </div>
         {/* Right Sidebar */}
-        <div className={`w-3/4 p-4 overflow-y-scroll ${isLeftPartVisible ? "max-md:hidden" : "w-full"
-          }`} ref={scrollContainerRef}>
+        <div
+          className={`w-3/4 p-4 overflow-y-scroll ${
+            isLeftPartVisible ? "max-md:hidden" : "w-full"
+          }`}
+          ref={scrollContainerRef}
+        >
           {selectedConversation && (
             <MessageList
               conversation={conversationName}
@@ -321,7 +321,12 @@ const ChatPage = () => {
           )}
           {selectedConversation && (
             <div className="fixed w-full bottom-2 max-md:w-auto ">
-              <Send onSend={onSend} typing={typing} istyping={istyping} handler={typingHandler} />
+              <Send
+                onSend={onSend}
+                typing={typing}
+                istyping={istyping}
+                handler={typingHandler}
+              />
             </div>
           )}
         </div>

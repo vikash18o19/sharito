@@ -10,13 +10,16 @@ const HomePage = () => {
 
   const router = useRouter();
   // Function to fetch posts from the server
-  const fetchPosts = async () => {
-    console.log("fetching posts", process.env.NEXT_PUBLIC_BACKEND_URI);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // Function to fetch paginated posts from the server
+  const fetchPaginatedPosts = async (page) => {
     try {
       // Get the token from cookies
       const token = Cookies.get("token");
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchPosts`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchPosts?page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -25,20 +28,37 @@ const HomePage = () => {
       );
 
       const data = await response.json();
-      setPosts(data);
+      setPosts(data.posts);
+      setCurrentPage(data.currentPage);
+      setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
 
-  // Fetch posts on initial page load
+  // Fetch the initial page of posts on component mount
   useEffect(() => {
-    fetchPosts();
+    fetchPaginatedPosts(currentPage);
   }, []);
 
-  // Function to handle refresh button click
-  const handleRefresh = () => {
-    fetchPosts();
+  // Function to handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchPaginatedPosts(page);
+  };
+
+  // Function to handle next page click
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
+  };
+
+  // Function to handle previous page click
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
   };
 
   const handleLogout = () => {
@@ -47,6 +67,9 @@ const HomePage = () => {
     Cookies.remove("token");
     router.push("/login");
     // Route to the /login page
+  };
+  const handleRefresh = () => {
+    fetchPaginatedPosts(1);
   };
 
   return (
@@ -82,13 +105,29 @@ const HomePage = () => {
       {/* Main Content */}
       <div className="flex flex-1 items-center justify-center bg-gray-100 p-4">
         <div className="max-w-xl w-full space-y-4">
-          {/* Refresh Button */}
-          <button
-            className="bg-purple-800 text-white py-2 px-4 rounded shadow hover:bg-purple-700 w-full sm:w-auto"
-            onClick={handleRefresh}
-          >
-            Refresh
-          </button>
+          <div className="flex justify-center mt-4 gap-4 text-center pb-6">
+            <button
+              className="bg-purple-800 text-white py-2 px-4 rounded shadow hover:bg-purple-700 w-full sm:w-auto"
+              onClick={handleRefresh}
+            >
+              Refresh
+            </button>
+            <button
+              className="bg-purple-800 text-white py-2 px-4 rounded shadow hover:bg-purple-700 mr-2"
+              onClick={handlePrevPage}
+            >
+              Previous
+            </button>
+            <span className="text-purple-800 text-lg font-semibold">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              className="bg-purple-800 text-white py-2 px-4 rounded shadow hover:bg-purple-700 ml-2"
+              onClick={handleNextPage}
+            >
+              Next
+            </button>
+          </div>
 
           {/* Iterate through the posts and display as cards */}
           {posts.map((post) => (
