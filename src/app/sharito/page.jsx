@@ -174,21 +174,25 @@ const HomePage = () => {
             >
               Refresh
             </button>
-            <button
-              className="bg-purple-800 text-white py-2 px-4 rounded shadow hover:bg-purple-700 mr-2"
-              onClick={handlePrevPage}
-            >
-              Previous
-            </button>
+            {currentPage > 1 ? (
+              <button
+                className="bg-purple-800 text-white py-2 px-4 rounded shadow hover:bg-purple-700 mr-2"
+                onClick={handlePrevPage}
+              >
+                Previous
+              </button>
+            ) : null}
             <span className="text-purple-800 text-lg font-semibold">
               Page {currentPage} of {totalPages}
             </span>
-            <button
-              className="bg-purple-800 text-white py-2 px-4 rounded shadow hover:bg-purple-700 ml-2"
-              onClick={handleNextPage}
-            >
-              Next
-            </button>
+            {currentPage < totalPages ? (
+              <button
+                className="bg-purple-800 text-white py-2 px-4 rounded shadow hover:bg-purple-700 ml-2"
+                onClick={handleNextPage}
+              >
+                Next
+              </button>
+            ) : null}
           </div>
 
           {/* Iterate through the posts and display as cards */}
