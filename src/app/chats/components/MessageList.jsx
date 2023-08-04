@@ -1,5 +1,5 @@
 import React from "react";
-import TypingAni from './TypingAnimation';
+import TypingAni from "./TypingAnimation";
 const MessageList = ({ conversation, user, messages, typing, istyping }) => {
   return (
     <div>
@@ -19,7 +19,7 @@ const MessageList = ({ conversation, user, messages, typing, istyping }) => {
             >
               <div className="text-sm text-black mb-2">{message.content}</div>
               <div className="text-xs text-slate-800">
-                {message.sender._id === user._id ? "You" : "Other User"} •{" "}
+                {message.senderName} •{" "}
                 {new Date(message.createdAt).toLocaleTimeString([], {
                   day: "numeric",
                   month: "numeric",
@@ -30,14 +30,12 @@ const MessageList = ({ conversation, user, messages, typing, istyping }) => {
                 })}
               </div>
             </li>
-          ))}          
-{istyping == true ?
-                  <TypingAni width={"4rem"} height={"4rem"} />: null
-                } 
+          ))}
+          {istyping == true ? (
+            <TypingAni width={"4rem"} height={"4rem"} />
+          ) : null}
         </ul>
-        
       )}
-       
     </div>
   );
 };

@@ -36,7 +36,9 @@ const CreatePostModal = ({ onClose, fetchPosts }) => {
       formData.append("description", description);
       formData.append("userID", userID);
       formData.append("creatorName", creatorName);
-      formData.append("image", compressedImage);
+      if (compressImage != null) {
+        formData.append("image", compressedImage);
+      }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/upload`,
@@ -48,6 +50,7 @@ const CreatePostModal = ({ onClose, fetchPosts }) => {
           body: formData,
         }
       );
+      console.log(response);
     } catch (error) {
       console.error("Error posting:", error);
     }

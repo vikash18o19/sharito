@@ -7,39 +7,65 @@ import { useRouter } from "next/navigation";
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
   const [showModal, setShowModal] = useState(false);
-
+  const token = Cookies.get("token");
+  const user = JSON.parse(Cookies.get("user"));
   const router = useRouter();
   // Function to fetch posts from the server
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  const [isUserPosts, setIsUserPosts] = useState(false);
   // Function to fetch paginated posts from the server
+
+  useEffect(() => {
+    fetchPaginatedPosts(1);
+  }, [isUserPosts]);
+
   const fetchPaginatedPosts = async (page) => {
+    console.log("for:", isUserPosts ? "user" : "all");
     try {
-      // Get the token from cookies
-      const token = Cookies.get("token");
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchPosts?page=${page}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      let response;
+      if (isUserPosts) {
+        response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchUserPosts?page=${page}&userID=${user._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchPosts?page=${page}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
 
       const data = await response.json();
-      setPosts(data.posts);
-      setCurrentPage(data.currentPage);
-      setTotalPages(data.totalPages);
+      setPosts((prev) => {
+        prev = data.posts;
+        return prev;
+      });
+      setCurrentPage((prev) => {
+        prev = data.currentPage;
+        return prev;
+      });
+      setTotalPages((prev) => {
+        prev = data.totalPages;
+        return prev;
+      });
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
 
   // Fetch the initial page of posts on component mount
-  useEffect(() => {
-    fetchPaginatedPosts(currentPage);
-  }, []);
+  // useEffect(() => {
+  //   fetchPaginatedPosts(currentPage);
+  // }, []);
 
   // Function to handle page change
   const handlePageChange = (page) => {
@@ -50,14 +76,20 @@ const HomePage = () => {
   // Function to handle next page click
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      handlePageChange(currentPage + 1);
+      handlePageChange((prev) => {
+        prev = currentPage + 1;
+        return prev;
+      });
     }
   };
 
   // Function to handle previous page click
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      handlePageChange(currentPage - 1);
+      handlePageChange((prev) => {
+        prev = currentPage - 1;
+        return prev;
+      });
     }
   };
 
@@ -71,6 +103,37 @@ const HomePage = () => {
   const handleRefresh = () => {
     fetchPaginatedPosts(1);
   };
+  const deletePost = async (postID) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/delete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            postID: postID,
+            userID: user._id,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (data.status === 200) {
+        fetchPaginatedPosts(1);
+        alert("Post deleted successfully");
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // const changePosts = () => {
+  //   setIsUserPosts((prev) => !prev);
+  //   fetchPaginatedPosts(1);
+  // };
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -86,13 +149,15 @@ const HomePage = () => {
           >
             Chats
           </button>
-          <button className="text-white bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded">
-            About
+          <button
+            className="text-white bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded"
+            onClick={() => {
+              setIsUserPosts((prev) => !prev);
+            }}
+          >
+            {isUserPosts ? "Home" : "My Posts"}
           </button>
-          <button className="text-white bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded">
-            Help
-          </button>
-          {/* Logout Button */}
+
           <button
             className="text-white bg-red-600 hover:bg-red-500 px-3 py-2 rounded"
             onClick={handleLogout}
@@ -135,6 +200,22 @@ const HomePage = () => {
               key={post._id}
               className="bg-white rounded-lg shadow p-4 transition-transform transform hover:-translate-y-2"
             >
+              {isUserPosts ? (
+                <button
+                  className="bg-purple-800 text-white py-2 px-4 mx-2 my-2 rounded shadow hover:bg-purple-700 ml-2"
+                  onClick={() => {
+                    console.log(
+                      "delete post:",
+                      post._id,
+                      " by user:",
+                      user._id
+                    );
+                    deletePost(post._id);
+                  }}
+                >
+                  Delete
+                </button>
+              ) : null}
               {post.image ? (
                 <img
                   src={`data:${post.image.contentType};base64,${Buffer.from(
@@ -166,7 +247,7 @@ const HomePage = () => {
           {showModal && (
             <CreatePostModal
               onClose={() => setShowModal(false)}
-              fetchPosts={fetchPosts}
+              fetchPosts={fetchPaginatedPosts}
             />
           )}
         </div>
