@@ -69,27 +69,24 @@ const HomePage = () => {
 
   // Function to handle page change
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setCurrentPage((prev) => {
+      prev = page;
+      return prev;
+    });
     fetchPaginatedPosts(page);
   };
 
   // Function to handle next page click
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      handlePageChange((prev) => {
-        prev = currentPage + 1;
-        return prev;
-      });
+      handlePageChange(currentPage + 1);
     }
   };
 
   // Function to handle previous page click
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      handlePageChange((prev) => {
-        prev = currentPage - 1;
-        return prev;
-      });
+      handlePageChange(currentPage - 1);
     }
   };
 
