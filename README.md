@@ -1,6 +1,9 @@
 # Sharito
 
 ## A good place to share your thoughts 🖋️📃
+- Create posts
+- Find users
+- Send Messages
 
 ### Landing page
 <img width="1624" alt="Screenshot 2023-08-04 at 5 04 59 PM" src="https://github.com/vikash18o19/sharito/assets/58856727/a49b952c-2851-428a-b13c-dc176a3e5fd3">
