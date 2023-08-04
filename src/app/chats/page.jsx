@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 var socket;
 
-const ChatPage = () => {
+export default function ChatPage() {
   const router = useRouter();
   const handleLogout = () => {
     // Clear out the cookies
@@ -33,13 +33,18 @@ const ChatPage = () => {
   const scrollContainerRef = useRef(null);
 
   // Fetch the user data from cookies
-  const user = JSON.parse(Cookies.get("user"));
+
+  let user = Cookies.get("user");
   const token = Cookies.get("token");
 
   const toggleLeftPartVisibility = () => {
     setIsLeftPartVisible((prevState) => !prevState);
   };
-
+  useEffect(() => {
+    if (user) {
+      user = JSON.parse(user);
+    }
+  }, []);
   useEffect(() => {
     fetchData();
 
@@ -333,6 +338,4 @@ const ChatPage = () => {
       </div>
     </div>
   );
-};
-
-export default ChatPage;
+}

@@ -4,17 +4,23 @@ import Cookies from "js-cookie";
 import CreatePostModal from "../sharito/components/CreatePost";
 import { useRouter } from "next/navigation";
 
-const HomePage = () => {
+export default function HomePage() {
   const [posts, setPosts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const token = Cookies.get("token");
-  const user = JSON.parse(Cookies.get("user"));
+  let user = Cookies.get("user");
   const router = useRouter();
   // Function to fetch posts from the server
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isUserPosts, setIsUserPosts] = useState(false);
   // Function to fetch paginated posts from the server
+
+  useEffect(() => {
+    if (user) {
+      user = JSON.parse(user);
+    }
+  }, []);
 
   useEffect(() => {
     fetchPaginatedPosts(1);
@@ -255,6 +261,4 @@ const HomePage = () => {
       </div>
     </div>
   );
-};
-
-export default HomePage;
+}
