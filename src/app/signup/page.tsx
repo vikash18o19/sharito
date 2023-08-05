@@ -37,15 +37,17 @@ export default function SignUpPage() {
       // Check if sign-in was successful
       if (data.status === "SUCCESS") {
         // Save user details in cookies
-        Cookies.set("user", JSON.stringify(data.data.user));
-        Cookies.set("token", data.data.token);
-
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+        localStorage.setItem("token", data.data.token);
+        alert(data.status);
         // Navigate to /sharito page
         router.push("/sharito");
       } else {
+        alert(data.message);
         console.error("Sign-in failed:", data.message);
       }
     } catch (error) {
+      alert(error);
       console.error("Error signing in:", error);
     }
   };
