@@ -2,11 +2,16 @@
 
 ## A good place to share your thoughts 🖋️📃
 
+#### Try at: https://sharito-lyx4c.ondigitalocean.app/
+
+- test user 1 : username : ```user1@testing.com``` ; password: ```12345678```
+- test user 2 : username : ```user2@testing.com``` ; password: ```12345678```
+---
 - Create posts and share your thoughts with the community.
 - You can delete your posts if you want.
 - Chat with your friends and share your thoughts with them.
 - Find your friends and chat with them.
-
+---
 ### Landing page
 
 <img width="1624" alt="Screenshot 2023-08-04 at 5 04 59 PM" src="https://github.com/vikash18o19/sharito/assets/58856727/a49b952c-2851-428a-b13c-dc176a3e5fd3">
