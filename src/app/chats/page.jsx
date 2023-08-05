@@ -293,7 +293,7 @@ export default function ChatPage() {
           </button>
         </div>
       </nav>
-      <div className="flex bg-slate-600 h-screen">
+      <div className="flex bg-slate-950 h-screen">
         {/* Left Sidebar */}
         <div
           className={`left-0 w-1/4 border-r border-gray-300 p-5 ${
