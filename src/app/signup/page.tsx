@@ -21,13 +21,16 @@ export default function SignUpPage() {
     const phone = user.phone;
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3002/api/user/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, name, phone }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/user/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password, name, phone }),
+        }
+      );
 
       const data = await response.json();
 
