@@ -9,6 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 
 const ConversationList = ({
+  user,
   setConvName,
   conversations,
   fetchMessages,
@@ -72,7 +73,9 @@ const ConversationList = ({
                       // fontWeight={"bold"}
                       fontSize={"1.05rem"}
                     >
-                      {conversation.name.toUpperCase()}
+                      {conversation.participantNames[0] === user.name
+                        ? conversation.participantNames[1].toUpperCase()
+                        : conversation.participantNames[0].toUpperCase()}
                     </Typography>
                   </React.Fragment>
                 }
@@ -81,20 +84,6 @@ const ConversationList = ({
             </ListItem>
           ))}
         </List>
-        // <ul className="divide-y divide-gray-300">
-        //   {conversations.map((conversation) => (
-        //     <li
-        //       key={conversation._id}
-        //       className="py-2 cursor-pointer bg-gray-100 hover:bg-gray-200 p-2 text-black"
-        //       onClick={() => {
-        //         handleClick(conversation);
-        //       }}
-        //     >
-        //       {/* Customize the display of the conversation based on your data structure */}
-        //       <div>{conversation.name}</div>
-        //     </li>
-        //   ))}
-        // </ul>
       )}
     </div>
   );

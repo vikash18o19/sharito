@@ -183,6 +183,8 @@ export default function ChatPage() {
   const startConversation = async (name, receiverId) => {
     try {
       console.log(receiverId, name);
+      console.log("creating conversation with: ", receiverId);
+      console.log("creating conversation from: ", user.current._id);
       const sendResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/messages/createConv`,
         {
@@ -305,6 +307,7 @@ export default function ChatPage() {
             startConversation={startConversation}
           />
           <ConversationList
+            user={user.current}
             setConvName={setConversationName}
             conversations={conversations}
             fetchMessages={fetchMessages}
