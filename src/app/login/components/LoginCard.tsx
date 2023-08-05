@@ -33,7 +33,8 @@ const LoginCard = () => {
         // Save user details in cookies
         Cookies.set("user", JSON.stringify(data.data.user));
         Cookies.set("token", data.data.token);
-
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+        localStorage.setItem("token", data.data.token);
         // Navigate to /sharito page
         router.push("/sharito");
       } else {

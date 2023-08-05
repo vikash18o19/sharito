@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import CreatePostModal from "../sharito/components/CreatePost";
 import { useRouter } from "next/navigation";
@@ -7,19 +7,20 @@ import { useRouter } from "next/navigation";
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const token = Cookies.get("token");
-  let user = Cookies.get("user");
+  let token = useRef(null);
+  let user = useRef(null);
   const router = useRouter();
-  // Function to fetch posts from the server
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isUserPosts, setIsUserPosts] = useState(false);
-  // Function to fetch paginated posts from the server
 
   useEffect(() => {
-    if (user) {
-      user = JSON.parse(user);
+    token.current = localStorage.getItem("token");
+    user.current = localStorage.getItem("user");
+    if (user.current) {
+      user.current = JSON.parse(user.current);
     }
+    console.log("user:", user.current);
   }, []);
 
   useEffect(() => {
@@ -32,10 +33,10 @@ export default function HomePage() {
       let response;
       if (isUserPosts) {
         response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchUserPosts?page=${page}&userID=${user._id}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchUserPosts?page=${page}&userID=${user.current._id}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token.current}`,
             },
           }
         );
@@ -44,12 +45,12 @@ export default function HomePage() {
           `${process.env.NEXT_PUBLIC_BACKEND_URI}/api/posts/fetchPosts?page=${page}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token.current}`,
             },
           }
         );
       }
-
+      console.log(response);
       const data = await response.json();
       setPosts((prev) => {
         prev = data.posts;
@@ -98,8 +99,7 @@ export default function HomePage() {
 
   const handleLogout = () => {
     // Clear out the cookies
-    Cookies.remove("user");
-    Cookies.remove("token");
+    localStorage.clear();
     router.push("/login");
     // Route to the /login page
   };
@@ -114,11 +114,11 @@ export default function HomePage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token.current}`,
           },
           body: JSON.stringify({
             postID: postID,
-            userID: user._id,
+            userID: user.current._id,
           }),
         }
       );
@@ -215,7 +215,7 @@ export default function HomePage() {
                       "delete post:",
                       post._id,
                       " by user:",
-                      user._id
+                      user.current._id
                     );
                     deletePost(post._id);
                   }}

@@ -23,8 +23,8 @@ const CreatePostModal = ({ onClose, fetchPosts }) => {
     e.preventDefault();
     try {
       // Get the token from cookies
-      const token = Cookies.get("token");
-      const user = JSON.parse(Cookies.get("user"));
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user"));
       const userID = user._id;
       const creatorName = user.name;
       console.log(description, userID, creatorName);

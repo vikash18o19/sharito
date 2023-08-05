@@ -15,8 +15,7 @@ export default function ChatPage() {
   const router = useRouter();
   const handleLogout = () => {
     // Clear out the cookies
-    Cookies.remove("user");
-    Cookies.remove("token");
+    localStorage.clear();
     router.push("/login");
     // Route to the /login page
   };
@@ -34,15 +33,17 @@ export default function ChatPage() {
 
   // Fetch the user data from cookies
 
-  let user = Cookies.get("user");
-  const token = Cookies.get("token");
+  let user = useRef(null);
+  let token = useRef(null);
 
   const toggleLeftPartVisibility = () => {
     setIsLeftPartVisible((prevState) => !prevState);
   };
   useEffect(() => {
+    user.current = localStorage.getItem("user");
+    token.current = localStorage.getItem("token");
     if (user) {
-      user = JSON.parse(user);
+      user.current = JSON.parse(user.current);
     }
   }, []);
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function ChatPage() {
     socket = io(process.env.NEXT_PUBLIC_BACKEND_URI);
 
     // Emit a "setup" event to the server to identify the current user
-    socket.emit("setup", user);
+    socket.emit("setup", user.current);
 
     // Listen for a "connected" event to confirm the connection is successful
     socket.on("connected", () => {
@@ -98,7 +99,7 @@ export default function ChatPage() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token.current}`,
           },
         }
       );
@@ -117,7 +118,7 @@ export default function ChatPage() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token.current}`,
           },
         }
       );
@@ -140,7 +141,7 @@ export default function ChatPage() {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token.current}`,
           },
         }
       );
@@ -159,10 +160,13 @@ export default function ChatPage() {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token.current}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ content: message, senderName: user.name }),
+          body: JSON.stringify({
+            content: message,
+            senderName: user.current.name,
+          }),
         }
       );
 
@@ -184,12 +188,12 @@ export default function ChatPage() {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token.current}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             name: name,
-            participants: [user._id, receiverId],
+            participants: [user.current._id, receiverId],
           }),
         }
       );
@@ -318,7 +322,7 @@ export default function ChatPage() {
           {selectedConversation && (
             <MessageList
               conversation={conversationName}
-              user={user}
+              user={user.current}
               messages={messages}
               typing={typing}
               istyping={istyping}
