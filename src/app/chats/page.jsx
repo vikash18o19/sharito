@@ -1,5 +1,5 @@
 "use client";
-
+// main page where all chats are displayed.
 import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import Cookies from "js-cookie";
