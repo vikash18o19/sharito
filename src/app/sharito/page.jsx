@@ -200,8 +200,8 @@ export default function HomePage() {
               </button>
             ) : null}
           </div>
-
           {/* Iterate through the posts and display as cards */}
+          //
           {posts.map((post) => (
             <div
               key={post._id}
@@ -241,7 +241,6 @@ export default function HomePage() {
               </p>
             </div>
           ))}
-
           {/* + Button for Create Post */}
           <button
             className="h-20 w-20 fixed bottom-10 right-10 bg-purple-800 text-white p-4 rounded-full shadow-lg hover:bg-purple-700 text-center text-3xl"
@@ -249,7 +248,6 @@ export default function HomePage() {
           >
             +
           </button>
-
           {/* Create Post Modal */}
           {showModal && (
             <CreatePostModal
