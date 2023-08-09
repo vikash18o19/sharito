@@ -2,7 +2,6 @@
 // main page where all chats are displayed.
 import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
-import Cookies from "js-cookie";
 import ConversationList from "./components/ConversationList";
 import MessageList from "./components/MessageList";
 import SearchUsers from "./components/SearchUsers";

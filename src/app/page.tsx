@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -15,5 +13,3 @@ export default function Home() {
     </div>
   );
 }
-//js , jsx -> js+HTML // js,jsx
-//ts, tsx -> ts+HTML  // ts,tsx

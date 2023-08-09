@@ -2,7 +2,6 @@
 //main page where all the posts are displayed
 
 import { useState, useEffect, useRef } from "react";
-import Cookies from "js-cookie";
 import CreatePostModal from "../sharito/components/CreatePost";
 import { useRouter } from "next/navigation";
 
