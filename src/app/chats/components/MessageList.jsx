@@ -3,7 +3,7 @@ import TypingAni from "./TypingAnimation";
 const MessageList = ({ conversation, user, messages, typing, istyping }) => {
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">{conversation}</h2>
+      {/* <h2 className="text-2xl font-semibold mb-4">{conversation}</h2> */}
       {messages.length === 0 ? (
         <p>No messages found.</p>
       ) : (
