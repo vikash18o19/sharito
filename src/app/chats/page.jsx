@@ -331,7 +331,7 @@ export default function ChatPage() {
             />
           )}
           {selectedConversation && (
-            <div className="fixed w-full bottom-2 max-md:w-auto ">
+            <div className="fixed w-full bottom-2 max-md:w-auto flex items-center justify-center ">
               <Send
                 onSend={onSend}
                 typing={typing}

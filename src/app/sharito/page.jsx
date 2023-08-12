@@ -142,7 +142,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-slate-100">
       {/* Navbar */}
-      <nav className="bg-purple-800 text-white p-4 flex items-center justify-between">
+      <nav className="bg-purple-800 text-white p-4 flex items-center justify-between fixed top-0 left-0 right-0 z-50">
         <h1 className="text-lg font-semibold">Sharito</h1>
         <div className="space-x-2">
           <button
