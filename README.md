@@ -2,6 +2,8 @@
 
 ## A good place to share your thoughts 🖋️📃
 
+![sharito-demo](https://github.com/vikash18o19/sharito/assets/58856727/03b35f80-42b3-4147-bb39-3f4b45d7abe9)
+
 #### Try at: https://sharito-lyx4c.ondigitalocean.app/
 
 - test user 1 : username : ```user1@testing.com``` ; password: ```12345678```
