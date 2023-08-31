@@ -2,7 +2,6 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -34,13 +33,10 @@ export default function SignUpPage() {
 
       const data = await response.json();
 
-      // Check if sign-in was successful
       if (data.status === "SUCCESS") {
-        // Save user details in cookies
         localStorage.setItem("user", JSON.stringify(data.data.user));
         localStorage.setItem("token", data.data.token);
         alert(data.status);
-        // Navigate to /sharito page
         router.push("/sharito");
       } else {
         alert(data.message);
